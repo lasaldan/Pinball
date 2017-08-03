@@ -1,14 +1,5 @@
-/**
-* @author       Chris Campbell <iforce2d@gmail.com>
-* @author       Richard Davey <rich@photonstorm.com>
-* @copyright    2015 Photon Storm Ltd.
-* @license      {@link http://choosealicense.com/licenses/no-license/|No License}
-* 
-* @description  This example requires the Phaser Box2D Plugin to run.
-*               For more details please see http://phaser.io/shop/plugins/box2d
-*/
 
-var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { create: create, update: update, render: render });
+var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'pinball', { preload: preload, create: create, update: update, render: render });
 
 var outlineVertices = [1440,-3186.59,1376.96,-3195.95,1023.88,-2194.34,1345.45,-1961.25,1345.45,-663.375,
     638.684,-480.341,160.054,-154.361,150.206,471.008,-318.575,470.023,-319.559,-153.376,
@@ -46,10 +37,14 @@ var flipperJoints = [];
 var PTM = 100; // conversion ratio for values in arrays above
 var needReset = false;
 
+function preload() {
+  game.load.image('pinball', 'pinball.png');
+}
+
 function create() {
-    
+
     game.world.setBounds(-400, -520, 800, 600);
-    
+
     game.stage.backgroundColor = '#124184';
 
     // Enable Box2D physics
@@ -57,10 +52,10 @@ function create() {
     game.physics.box2d.ptmRatio = 500;
     game.physics.box2d.gravity.y = 5000; // large gravity to make scene feel smaller
     game.physics.box2d.friction = 0.1;
-    
+
     // Make the ground body
     var mainBody = new Phaser.Physics.Box2D.Body(this.game, null, 0, 0, 0);
-    
+
     // Add bounce-less fixtures
     game.physics.box2d.restitution = 0.1;
     mainBody.addLoop(outlineVertices);
@@ -68,7 +63,7 @@ function create() {
     mainBody.addLoop(guide2Vertices);
     mainBody.addChain(guide3Vertices);
     mainBody.addChain(guide4Vertices);
-    
+
     // Add bouncy fixtures
     game.physics.box2d.restitution = 1;
     mainBody.addEdge(bouncer1[0], bouncer1[1], bouncer1[2], bouncer1[3]);
@@ -88,21 +83,26 @@ function create() {
     {
         mainBody.addCircle(2.8 * PTM, largeCircles[2 * i + 0], largeCircles[2 * i + 1]);
     }
-    
+
     // Add gutter fixture
     gutterFixture = mainBody.addEdge(gutterVertices[0], gutterVertices[1], gutterVertices[2], gutterVertices[3]);
     gutterFixture.SetSensor(true);
-    
+
     // Set restitution for launcher
-    game.physics.box2d.restitution = 2; 
+    game.physics.box2d.restitution = 2;
     mainBody.addEdge(launcherVertices[0], launcherVertices[1], launcherVertices[2], launcherVertices[3]);
-    
+
     // ball
     game.physics.box2d.restitution = 0.1;
     ballBody = new Phaser.Physics.Box2D.Body(this.game, null, ballStart[0] * PTM, ballStart[1] * PTM);
     ballBody.setCircle(0.64 * PTM);
     ballBody.setFixtureContactCallback(gutterFixture, onHitGutter, this);
     ballBody.bullet = true;
+
+    ballSprite = game.add.sprite(ballStart[0] * PTM, ballStart[1] * PTM, 'pinball');
+    ballBody.sprite = ballSprite
+    //ballBody.physics.box2d.enable(ballSprite);
+    //blockSprite.body.angle = 30;
 
     // Flippers
     game.physics.box2d.restitution = 0.1;
@@ -112,16 +112,16 @@ function create() {
 
     var rightFlipperBody = new Phaser.Physics.Box2D.Body(this.game, null, 6.4 * PTM, -7.99956 * PTM, 2);
     rightFlipperBody.addPolygon(rightFlipperVertices);
-    
+
     // Flipper joints
     var motorSpeed = 2;
-    var motorTorque = 100;  
+    var motorTorque = 100;
     // bodyA, bodyB, ax, ay, bx, by, motorSpeed, motorTorque, motorEnabled, lowerLimit, upperLimit, limitEnabled
     flipperJoints[0] = game.physics.box2d.revoluteJoint(mainBody,  leftFlipperBody,  -8*PTM,-7.99956*PTM, 0,0, motorSpeed, motorTorque, true, -25, 25, true );
     flipperJoints[1] = game.physics.box2d.revoluteJoint(mainBody, rightFlipperBody, 6.4*PTM,-7.99956*PTM, 0,0, motorSpeed, motorTorque, true, -25, 25, true );
-    
+
     cursors = game.input.keyboard.createCursorKeys();
-    
+
     var caption = game.add.text(5, 5, 'Pinball. Left/right arrow keys to control flippers.', { fill: '#ffffff', font: '14pt Arial' });
     caption.fixedToCamera = true;
 }
@@ -131,7 +131,7 @@ function onHitGutter(body1, body2, fixture1, fixture2, begin) {
 }
 
 function update() {
-    
+
     if (needReset)
     {
         ballBody.x = ballStart[0]*PTM;
@@ -141,9 +141,9 @@ function update() {
         ballBody.angularVelocity = 0;
         needReset = false;
     }
-    
+
     var flipperSpeed = 20; // rad/s
-    
+
     if (cursors.left.isDown)
     {
         flipperJoints[0].SetMotorSpeed(-flipperSpeed);
@@ -152,7 +152,7 @@ function update() {
     {
         flipperJoints[0].SetMotorSpeed(flipperSpeed);
     }
-    
+
     if (cursors.right.isDown)
     {
         flipperJoints[1].SetMotorSpeed(flipperSpeed);
@@ -161,7 +161,7 @@ function update() {
     {
         flipperJoints[1].SetMotorSpeed(-flipperSpeed);
     }
-    
+
 }
 
 function render() {
