@@ -1,57 +1,61 @@
 
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'pinball', { preload: preload, create: create, update: update, render: render });
 
-var outlineVertices = [1440,-3186.59,1376.96,-3195.95,1023.88,-2194.34,1345.45,-1961.25,1345.45,-663.375,
-    638.684,-480.341,160.054,-154.361,150.206,471.008,-318.575,470.023,-319.559,-153.376,
-    -800.158,-480.341,-1519.35,-619.21,-1518.23,-1988.98,-1147.38,-2175.73,-1429.31,-3152.17,
-    -1500.1,-3195.52,-1492.51,-3399.68,-1438.82,-3867.33,-1309.07,-4132.41,-1112.22,-4351.64,
-    -787.851,-4540.67,-389.666,-4670.41,139.843,-4778.28,655.92,-4846.15,872.006,-4837.87,
-    1067.14,-4792.27,1236.26,-4700.02,1374.63,-4584.71,1480.34,-4440.57,1557.21,-4271.45,
-    1601.65,-3992.59,1601.41,-3712.19,1604.11,-2197.86,1814.72,-2234.37,1848.77,-2057.55,
-    1600,-2003.04,1600,-171.408,1442.93,-169.434,1439.5,-663.941];
+var outlineVertices = [144,-318.659,137.696,-319.595,102.388,-219.434,134.545,-196.125,134.545,-66.3375,
+    63.8684,-48.0341,16.0054,-15.4361,15.0206,47.1008,-31.8575,47.0023,-31.9559,-15.3376,
+    -80.0158,-48.0341,-151.935,-61.921,-151.823,-198.898,-114.738,-217.573,-142.931,-315.217,
+    -150.01,-319.552,-149.251,-339.968,-143.882,-386.733,-130.907,-413.241,-111.222,-435.164,
+    -78.7851,-454.067,-38.9666,-467.041,13.9843,-477.828,65.592,-484.615,87.2006,-483.787,
+    106.714,-479.227,123.626,-470.002,137.463,-458.471,148.034,-444.057,155.721,-427.145,
+    160.165,-399.259,160.141,-371.219,160.411,-219.786,181.472,-223.437,184.877,-205.755,
+    160,-200.304,160,-17.1408,144.293,-16.9434,143.95,-66.3941];
 
-var launcherVertices = [1401.35,-224.963,1631.98,-224.963];
-var guide1Vertices = [-825.819,-746.541,-771.419,-853.487,-1280,-1120,-1280,-1759.99,-1360,-1759.99,
-    -1360,-959.993];
-var guide2Vertices = [663.001,-743.13,614.862,-855.893,1119.91,-1121.82,1123.3,-1760.68,1200.08,-1759.99,
-    1200.08,-959.993];
-var guide3Vertices = [-1116.81,-1753.55,-1118.98,-1277.67,-878.975,-1117.67];
-var guide4Vertices = [721.698,-1128.55,956.731,-1282.32,956.731,-1762.32];
-var gutterVertices = [-480.857,413.599,293.837,413.599];
+var launcherVertices = [140.135,-22.4963,163.198,-22.4963];
+var guide1Vertices = [-82.5819,-74.6541,-77.1419,-85.3487,-128,-112,-128,-175.999,-136,-175.999,
+    -136,-95.9993];
+var guide2Vertices = [66.3001,-74.313,61.4862,-85.5893,111.991,-112.182,112.33,-176.068,120.008,-175.999,
+    120.008,-95.9993];
+var guide3Vertices = [-111.681,-175.355,-111.898,-127.767,-87.8975,-111.767];
+var guide4Vertices = [72.1698,-112.855,95.6731,-128.232,95.6731,-176.232];
+var gutterVertices = [-48.0857,41.3599,29.3837,41.3599];
 
-var bouncer1 = [-1042.47,-1763.21,-826.297,-1160.74];
-var bouncer2 = [883.433,-1767.01,669.858,-1171.73];
+var bouncer1 = [-104.247,-176.321,-82.6297,-116.074];
+var bouncer2 = [88.3433,-176.701,66.9858,-117.173];
 
-var smallCircles = [1406,-3183.89,-1320,-1759.99,-1078.86,-1753.03,-861.88,-1152.05,918.723,-1760.8,1160.08,-1759.99,704.87,-1161.38];
-var mediumCircles = [-1500.82,-3132.63,-866.447,-3163.29,-290.006,-3074.23,187.945,-3415.55,614.227,-3074.23,-451.581,-2232.34,396.293,-2242];
-var largeCircles = [-446.686,-3704.69,309.841,-4133.62,995.658,-3595.05];
+var smallCircles = [140.6,-318.389,-1320,-175.999,-107.886,-175.303,-86.188,-115.205,91.8723,-176.08,116.008,-175.999,70.487,-116.138];
+var mediumCircles = [-150.082,-313.263,-86.6447,-316.329,-29.0006,-307.423,18.7945,-341.555,61.4227,-307.423,-45.1581,-223.234,39.6293,-224.2];
+var largeCircles = [-44.6686,-370.469,30.9841,-413.362,99.5658,-359.505];
 
-var leftFlipperVertices = [560,32,560,-32,0,-64,0,64];
-var rightFlipperVertices = [0,64,0,-64,-560,-32,-560,32];
+var leftFlipperVertices = [36,3.,36,-3.2,-25,-6.4,-25,6.4];
+var rightFlipperVertices = [25,6.4,25,-6.4,-36,-3.2,-36,3.2];
 
 var ballStart = [17.5016, -21.318];
 
 
 var ballBody;
 var flipperJoints = [];
-var PTM = 100; // conversion ratio for values in arrays above
+var PTM = 10; // conversion ratio for values in arrays above
 var needReset = false;
 
 function preload() {
   game.load.image('pinball', 'pinball.png');
+  game.load.image('leftFlipper', 'leftFlipper.png');
+  game.load.image('rightFlipper', 'rightFlipper.png');
+  game.load.image('background', 'gameboard.png');
 }
 
 function create() {
 
     game.world.setBounds(-400, -520, 800, 600);
 
-    game.stage.backgroundColor = '#124184';
+    game.stage.backgroundColor = '#FFFFFF';
+    game.add.image(-203, -496, 'background');
 
     // Enable Box2D physics
     game.physics.startSystem(Phaser.Physics.BOX2D);
-    game.physics.box2d.ptmRatio = 500;
-    game.physics.box2d.gravity.y = 5000; // large gravity to make scene feel smaller
-    game.physics.box2d.friction = 0.1;
+    game.physics.box2d.ptmRatio = 50;
+    game.physics.box2d.gravity.y = 500; // large gravity to make scene feel smaller
+    game.physics.box2d.friction = 0.19;
 
     // Make the ground body
     var mainBody = new Phaser.Physics.Box2D.Body(this.game, null, 0, 0, 0);
@@ -93,36 +97,43 @@ function create() {
     mainBody.addEdge(launcherVertices[0], launcherVertices[1], launcherVertices[2], launcherVertices[3]);
 
     // ball
-    game.physics.box2d.restitution = 0.1;
-    ballBody = new Phaser.Physics.Box2D.Body(this.game, null, ballStart[0] * PTM, ballStart[1] * PTM);
-    ballBody.setCircle(0.64 * PTM);
-    ballBody.setFixtureContactCallback(gutterFixture, onHitGutter, this);
-    ballBody.bullet = true;
-
-    ballSprite = game.add.sprite(ballStart[0] * PTM, ballStart[1] * PTM, 'pinball');
-    ballBody.sprite = ballSprite
-    //ballBody.physics.box2d.enable(ballSprite);
-    //blockSprite.body.angle = 30;
+    game.physics.box2d.restitution = .1;
+    ball = game.add.sprite(ballStart[0]*PTM, ballStart[1]*PTM, 'pinball')
+    game.physics.box2d.enable(ball, false)
+    ball.scale.set(.035)
+    //ball.body = new Phaser.Physics.Box2D.Body(this.game, null, ballStart[0] * PTM, ballStart[1] * PTM);
+    ball.body.setCircle(0.64 * PTM)
+    ball.body.setFixtureContactCallback(gutterFixture, onHitGutter, this)
+    ball.body.bullet = true
 
     // Flippers
     game.physics.box2d.restitution = 0.1;
 
-    var leftFlipperBody = new Phaser.Physics.Box2D.Body(this.game, null, -8 * PTM, -7.99956 * PTM, 2);
+    var leftFlipper = game.add.sprite(null,null, 'leftFlipper')
+    leftFlipper.scale.set(.35);
+    game.physics.box2d.enable(leftFlipper, false)
+    var leftFlipperBody = leftFlipper.body;
+    leftFlipperBody.clearFixtures()
     leftFlipperBody.addPolygon(leftFlipperVertices);
 
-    var rightFlipperBody = new Phaser.Physics.Box2D.Body(this.game, null, 6.4 * PTM, -7.99956 * PTM, 2);
+    var rightFlipper = game.add.sprite(null,null, 'rightFlipper')
+    rightFlipper.scale.set(.35);
+    game.physics.box2d.enable(rightFlipper, false)
+    var rightFlipperBody = rightFlipper.body;
+    rightFlipperBody.clearFixtures()
     rightFlipperBody.addPolygon(rightFlipperVertices);
+
 
     // Flipper joints
     var motorSpeed = 2;
     var motorTorque = 100;
     // bodyA, bodyB, ax, ay, bx, by, motorSpeed, motorTorque, motorEnabled, lowerLimit, upperLimit, limitEnabled
-    flipperJoints[0] = game.physics.box2d.revoluteJoint(mainBody,  leftFlipperBody,  -8*PTM,-7.99956*PTM, 0,0, motorSpeed, motorTorque, true, -25, 25, true );
-    flipperJoints[1] = game.physics.box2d.revoluteJoint(mainBody, rightFlipperBody, 6.4*PTM,-7.99956*PTM, 0,0, motorSpeed, motorTorque, true, -25, 25, true );
+    flipperJoints[0] = game.physics.box2d.revoluteJoint(mainBody,  leftFlipperBody,  -8*PTM,-7.99956*PTM, -25,0, motorSpeed, motorTorque, true, -25, 25, true );
+    flipperJoints[1] = game.physics.box2d.revoluteJoint(mainBody, rightFlipperBody, 6.4*PTM,-7.99956*PTM, 25,0, motorSpeed, motorTorque, true, -25, 25, true );
 
     cursors = game.input.keyboard.createCursorKeys();
 
-    var caption = game.add.text(5, 5, 'Pinball. Left/right arrow keys to control flippers.', { fill: '#ffffff', font: '14pt Arial' });
+    var caption = game.add.text(5, 5, 'Left/right arrow keys to control flippers.', { fill: '#000000', font: '14pt Arial' });
     caption.fixedToCamera = true;
 }
 
@@ -134,11 +145,11 @@ function update() {
 
     if (needReset)
     {
-        ballBody.x = ballStart[0]*PTM;
-        ballBody.y = ballStart[1]*PTM;
-        ballBody.velocity.x = 0;
-        ballBody.velocity.y = 0;
-        ballBody.angularVelocity = 0;
+        ball.body.x = ballStart[0]*PTM;
+        ball.body.y = ballStart[1]*PTM;
+        ball.body.velocity.x = 0;
+        ball.body.velocity.y = 0;
+        ball.body.angularVelocity = 0;
         needReset = false;
     }
 
@@ -152,7 +163,7 @@ function update() {
     {
         flipperJoints[0].SetMotorSpeed(flipperSpeed);
     }
-
+    
     if (cursors.right.isDown)
     {
         flipperJoints[1].SetMotorSpeed(flipperSpeed);
@@ -166,6 +177,6 @@ function update() {
 
 function render() {
 
-    game.debug.box2dWorld();
+    //game.debug.box2dWorld();
 
 }
