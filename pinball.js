@@ -1,5 +1,8 @@
 
-var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'pinball', { preload: preload, create: create, update: update, render: render });
+var width = window.innerWidth
+var height = window.innerHeight
+
+var game = new Phaser.Game(800, 707, Phaser.CANVAS, 'pinball', { preload: preload, create: create, update: update, render: render });
 
 var outlineVertices = [144,-318.659,137.696,-319.595,102.388,-219.434,134.545,-196.125,134.545,-66.3375,
     63.8684,-48.0341,16.0054,-15.4361,15.0206,47.1008,-31.8575,47.0023,-31.9559,-15.3376,
@@ -41,7 +44,7 @@ function preload() {
   game.load.image('pinball', 'pinball.png');
   game.load.image('leftFlipper', 'leftFlipper.png');
   game.load.image('rightFlipper', 'rightFlipper.png');
-  game.load.image('background', 'gameboard.png');
+  game.load.image('background', 'gameboard1.png');
 }
 
 function create() {
@@ -49,12 +52,13 @@ function create() {
     game.world.setBounds(-400, -520, 800, 600);
 
     game.stage.backgroundColor = '#FFFFFF';
-    game.add.image(-203, -496, 'background');
+    var background = game.add.image(-400,-520, 'background');
+    background.scale.setTo(.393, .393)
 
     // Enable Box2D physics
     game.physics.startSystem(Phaser.Physics.BOX2D);
     game.physics.box2d.ptmRatio = 50;
-    game.physics.box2d.gravity.y = 500; // large gravity to make scene feel smaller
+    game.physics.box2d.gravity.y = 400; // large gravity to make scene feel smaller
     game.physics.box2d.friction = 0.19;
 
     // Make the ground body
@@ -163,7 +167,7 @@ function update() {
     {
         flipperJoints[0].SetMotorSpeed(flipperSpeed);
     }
-    
+
     if (cursors.right.isDown)
     {
         flipperJoints[1].SetMotorSpeed(flipperSpeed);
@@ -177,6 +181,6 @@ function update() {
 
 function render() {
 
-    //game.debug.box2dWorld();
+    game.debug.box2dWorld();
 
 }
